@@ -29,12 +29,14 @@ class MainActivity : AppCompatActivity() {
             when(result){
                 is Resource.Error -> {
                     Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+                    binding.progressBar.isVisible = false
                 }
                 is Resource.Loading -> {
                     binding.progressBar.isVisible = true
                 }
                 is Resource.Success -> {
                     rikAdapter.submitList(result.data)
+                    binding.progressBar.isVisible = false
                 }
             }
             setupCharactersRecycler()
