@@ -2,6 +2,8 @@ package com.example.saj.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.bumptech.glide.Glide
@@ -12,31 +14,27 @@ import com.example.saj.ui.Indicator
 
 class RikAdapter(
     private val onClick: (characterId: Int) -> Unit,
-) : Adapter<RikAdapter.RikViewHolder>() {
+) : ListAdapter<Character, RikViewHolder>(
+    RikDiffCallback()
+) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = RikViewHolder(
+        ItemRikBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        ), onClick
+    )
 
-    private var list = listOf<Character>()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RikViewHolder {
-        return RikViewHolder(
-            ItemRikBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
-    }
-
-    override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(holder: RikViewHolder, position: Int) {
-        holder.bind(list[position])
+        holder.bind(getItem(position))
     }
+}
 
-    fun submitList(list: List<Character>) {
-        this.list = list
-    }
-
-    inner class RikViewHolder(private val binding: ItemRikBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class RikViewHolder(
+        private val binding: ItemRikBinding,
+        private val onClick: (characterId: Int) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(model: Character) = with(binding) {
             tvCharacterName.text = model.name
             tvExistence.text = model.status
@@ -51,4 +49,11 @@ class RikAdapter(
             }
         }
     }
+
+class RikDiffCallback: DiffUtil.ItemCallback<Character>(){
+    override fun areItemsTheSame(oldItem: Character, newItem: Character)=oldItem.id==newItem.id
+
+
+    override fun areContentsTheSame(oldItem: Character, newItem: Character)=oldItem==newItem
+
 }

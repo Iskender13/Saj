@@ -9,21 +9,20 @@ import javax.inject.Inject
 
 class Repository @Inject constructor(private val api: AppApiService) {
 
-    fun getCharacters(): MutableLiveData<List<Character>> {
-        val rik = MutableLiveData<List<Character>>()
-
+    fun getCharacters(): MutableLiveData<Resource<List<Character>>> {
+        val rik = MutableLiveData<Resource<List<Character>>>()
+        rik.postValue(Resource.Loading())
         api.getCharacters().enqueue(object : Callback<BaseResponse<Character>> {
             override fun onResponse(call: Call<BaseResponse<Character>>, response: Response<BaseResponse<Character>>) {
                 if (response.isSuccessful && response.body() != null) {
                     response.body()?.let {
-                        rik.postValue(it.results)
+                        rik.postValue(Resource.Success(it.results))
                     }
                 }
-                Log.d("onResponse", "данные пришли")
             }
 
             override fun onFailure(call: Call<BaseResponse<Character>>, t: Throwable) {
-                Log.e("onFailure", "данные не пришли")
+                rik.postValue(Resource.Error(t.localizedMessage?:"Непредвиденная ошибка"))
             }
         })
         return rik

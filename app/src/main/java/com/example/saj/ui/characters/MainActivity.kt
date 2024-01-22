@@ -2,10 +2,13 @@ package com.example.saj.ui.characters
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.saj.data.Resource
 import com.example.saj.databinding.ActivityMainBinding
 import com.example.saj.recycler.RikAdapter
 import com.example.saj.ui.characterDetails.DetailActivity
@@ -22,8 +25,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.getCharacters().observe(this) {
-            rikAdapter.submitList(it)
+        viewModel.getCharacters().observe(this) {result->
+            when(result){
+                is Resource.Error -> {
+                    Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+                }
+                is Resource.Loading -> {
+                    binding.progressBar.isVisible = true
+                }
+                is Resource.Success -> {
+                    rikAdapter.submitList(result.data)
+                }
+            }
             setupCharactersRecycler()
         }
     }
