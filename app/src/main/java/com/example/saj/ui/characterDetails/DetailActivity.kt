@@ -1,18 +1,17 @@
 package com.example.saj.ui.characterDetails
 
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.saj.R
 import com.example.saj.data.Character
 import com.example.saj.databinding.DetailActivityBinding
+import com.example.saj.ui.Base.BaseActivity
 import com.example.saj.ui.Indicator
 import com.example.saj.ui.utils.RikKeys
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : BaseActivity() {
     private lateinit var binding: DetailActivityBinding
     private val viewModel by viewModel<CharacterDetailsViewModel>()
 
@@ -23,9 +22,8 @@ class DetailActivity : AppCompatActivity() {
 
         val activityId = intent.getIntExtra(RikKeys.CHARACTER_ID_ARG, 0)
 
-        viewModel.getCharacterDetails(activityId).observe(this) {
-            setupCharacterData(it)
-        }
+        viewModel.getCharacterDetails(activityId).stateHandler(
+            success = {setupCharacterData(it)})
     }
 
     private fun setupCharacterData(receiveData: Character) = with(binding) {

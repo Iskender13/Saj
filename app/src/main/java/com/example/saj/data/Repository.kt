@@ -1,39 +1,15 @@
 package com.example.saj.data
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
-import kotlinx.coroutines.Dispatchers
+import com.example.saj.ui.Base.BaseRepository
 
-class Repository (private val api: AppApiService) {
+class Repository (private val api: AppApiService):BaseRepository(api) {
 
-    fun getCharacters(): LiveData<Resource<List<Character>>> = liveData(Dispatchers.IO){
-        emit(Resource.Loading())
-        try {
-            val response=api.getCharacters()
-            if (response.isSuccessful && response.body() != null){
-                response.body()?.let {
-                    emit(Resource.Success(it.results))
-                }
-            }
-        }catch (e:Exception){
-            emit(Resource.Error(e.localizedMessage?:"Unknown error"))
-        }
+    fun getCharacters():LiveData<Resource<List<Character>>> = performRequest {
+        api.getCharacters().body()?.results ?: emptyList()
     }
-
-    fun getCharacterDetails(id: Int): LiveData<Character> = liveData(Dispatchers.IO) {
-
-        try {
-            val cartoon = api.getCharacterDetails(id)
-            if (cartoon.isSuccessful) {
-                cartoon.body()?.let {
-                    emit(it)
-                }
-            }
-        } catch (ex: Exception) {
-            Log.e("failure", "getCharacterDetails")
-        }
-
+    fun getCharacterDetails(id: Int): LiveData<Resource<Character>> = performRequest{
+        api.getCharacterDetails(id).body()!!
     }
 
 }
