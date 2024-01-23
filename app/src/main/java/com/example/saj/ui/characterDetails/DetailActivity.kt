@@ -9,12 +9,12 @@ import com.example.saj.data.Character
 import com.example.saj.databinding.DetailActivityBinding
 import com.example.saj.ui.Indicator
 import com.example.saj.ui.utils.RikKeys
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
+
 class DetailActivity : AppCompatActivity() {
     private lateinit var binding: DetailActivityBinding
-    private val viewModel by viewModels<CharacterDetailsViewModel>()
+    private val viewModel by viewModel<CharacterDetailsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
